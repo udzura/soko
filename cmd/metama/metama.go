@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/udzura/metama"
 )
@@ -17,6 +18,11 @@ func main() {
 	flag.Parse()
 
 	args := flag.Args()
+	if len(args) == 0 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	command := args[0]
 	realArgs := args[1:]
 
