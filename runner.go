@@ -17,13 +17,16 @@ func (r *Runner) Run(subcommand string, args []string) {
 
 	switch subcommand {
 	case "get":
+		checkArgSizeOf(args, 1)
 		key := args[0]
 		r.Get(key)
 	case "put":
+		checkArgSizeOf(args, 2)
 		key := args[0]
 		value := args[1]
 		r.Put(key, value)
 	case "delete":
+		checkArgSizeOf(args, 1)
 		key := args[0]
 		r.Delete(key)
 
@@ -58,4 +61,12 @@ func (r *Runner) Delete(key string) {
 		panic(err)
 	}
 	fmt.Println("OK")
+}
+
+func checkArgSizeOf(args []string, size int) {
+	if len(args) != size {
+		fmt.Fprintf(os.Stderr, "Argument size is mismatch for subcommand: %v\n", flag.Args())
+		flag.Usage()
+		os.Exit(1)
+	}
 }
