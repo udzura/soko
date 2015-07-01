@@ -20,3 +20,8 @@ type Backend interface {
 	// Watch(serverID string, key string) , this blocks until change
 	// ...
 }
+
+func FindBackend(uri string) Backend {
+	// TBD parse uri and return proper backend
+	return NewConsulBackend()
+}

@@ -20,9 +20,9 @@ func NewConsulBackend() *ConsulBackend {
 	}
 }
 
-func (b *ConsulBackend) pathOf(serverID string, key string) {
+func (b *ConsulBackend) pathOf(serverID string, key string) string {
 	const prefix = "metadata"
-	return fmt.Sprintf("%s/%s/%s", prefix, serverID, string)
+	return fmt.Sprintf("%s/%s/%s", prefix, serverID, key)
 }
 
 func (b *ConsulBackend) Save() error {
@@ -33,7 +33,7 @@ func (b *ConsulBackend) Save() error {
 func (b *ConsulBackend) Get(serverID string, key string) (string, error) {
 	p, _, err := b.client.Get(b.pathOf(serverID, key), nil)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	return string(p.Value), nil
@@ -44,7 +44,7 @@ func (b *ConsulBackend) Put(serverID string, key string, value string) error {
 		Key:   b.pathOf(serverID, key),
 		Value: []byte(value),
 	}
-	_, err := b.client.Put(p, nil)
+	_, err := b.client.Put(data, nil)
 
 	return err
 }
