@@ -34,6 +34,9 @@ func (r *Runner) Run(subcommand string, args []string) {
 		fmt.Fprintf(os.Stderr, "join is not yet implemented...\n")
 		flag.Usage()
 
+	case "version":
+		fmt.Printf("version v%s\n", Version)
+
 	default:
 		flag.Usage()
 	}
