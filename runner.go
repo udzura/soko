@@ -28,7 +28,7 @@ func (r *Runner) Run(subcommand string, args []string) {
 		r.Delete(key)
 
 	case "join":
-		fmt.Fprintf(os.Stderr, "join is not yet implemented...")
+		fmt.Fprintf(os.Stderr, "join is not yet implemented...\n")
 		flag.Usage()
 
 	default:

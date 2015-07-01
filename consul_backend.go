@@ -36,6 +36,11 @@ func (b *ConsulBackend) Get(serverID string, key string) (string, error) {
 		return "", err
 	}
 
+	if p == nil || len(p.Value) == 0 {
+		fmt.Fprintf(os.Stderr, "Value for %s seems to be empty.\n", key)
+		return "", nil
+	}
+
 	return string(p.Value), nil
 }
 
