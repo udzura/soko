@@ -4,7 +4,7 @@ import (
 	"flag"
 	"os"
 
-	"github.com/udzura/metama"
+	"github.com/udzura/soko"
 )
 
 var serverID string
@@ -13,7 +13,7 @@ func main() {
 	const usage = "Target server's ID to get/put/delete. Defaults to cloud-init's server ID"
 
 	// FIXME: get default server id via cloud directory
-	flag.StringVar(&serverID, "server-id", metama.CloudServerID(), usage)
+	flag.StringVar(&serverID, "server-id", soko.CloudServerID(), usage)
 
 	flag.Parse()
 
@@ -26,7 +26,7 @@ func main() {
 	command := args[0]
 	realArgs := args[1:]
 
-	runner := &metama.Runner{
+	runner := &soko.Runner{
 		ServerID: serverID,
 	}
 	runner.Run(command, realArgs)

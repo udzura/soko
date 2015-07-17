@@ -1,4 +1,4 @@
-package metama
+package soko
 
 import (
 	"io/ioutil"

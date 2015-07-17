@@ -1,4 +1,4 @@
-package metama
+package soko
 
 type Backend interface {
 	// Saves current configuration to a specific file
