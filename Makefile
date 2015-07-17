@@ -24,5 +24,7 @@ compress: all clean-zip
 	cd pkg && ( find . -perm -u+x -type f -name 'soko*' | gxargs -i zip -m {}.zip {} )
 
 release: compress
+	git push origin master
 	ghr $(VERSION) pkg
+	git fetch origin
 
