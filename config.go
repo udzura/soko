@@ -3,6 +3,7 @@ package soko
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/pelletier/go-toml"
 )
@@ -20,6 +21,11 @@ uri = "%s"
 )
 
 func DefaultConfig() (*Config, error) {
+	if _, err := os.Stat(defaultConfigPath); err != nil {
+		// If there is no file, returns empty config
+		return &Config{}, nil
+	}
+
 	data, err := toml.LoadFile(defaultConfigPath)
 	if err != nil {
 		return nil, err
