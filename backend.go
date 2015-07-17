@@ -1,5 +1,10 @@
 package soko
 
+import (
+	"fmt"
+	"net/url"
+)
+
 type Backend interface {
 	// Saves current configuration to a specific file
 	Save() error
@@ -21,7 +26,19 @@ type Backend interface {
 	// ...
 }
 
-func FindBackend(uri string) Backend {
-	// TBD parse uri and return proper backend
-	return NewConsulBackend()
+func FindBackend(uri string) (Backend, error) {
+	u, err := url.Parse(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: implement AWS and OpenStack backend
+	switch u.Scheme {
+	case "consul":
+		return NewConsulBackend(u.Host, false)
+	case "consuls":
+		return NewConsulBackend(u.Host, true)
+	default:
+		return nil, fmt.Errorf("Unsupported schema: %s", uri)
+	}
 }

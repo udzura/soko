@@ -11,13 +11,24 @@ type ConsulBackend struct {
 	client *api.KV
 }
 
-func NewConsulBackend() *ConsulBackend {
-	client, _ := api.NewClient(api.DefaultConfig())
+func NewConsulBackend(hostWithPort string, ssl bool) (*ConsulBackend, error) {
+	conf := api.DefaultConfig()
+	if hostWithPort != "" {
+		conf.Address = hostWithPort
+	}
+	if ssl {
+		conf.Scheme = "https"
+	}
+
+	client, err := api.NewClient(conf)
+	if err != nil {
+		return nil, err
+	}
 	kv := client.KV()
 
 	return &ConsulBackend{
 		client: kv,
-	}
+	}, nil
 }
 
 func (b *ConsulBackend) pathOf(serverID string, key string) string {

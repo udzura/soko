@@ -13,7 +13,11 @@ type Runner struct {
 }
 
 func (r *Runner) Run(subcommand string, args []string) {
-	r.backend = FindBackend("consul://dummy:8500")
+	backend, err := FindBackend("consul:///")
+	if err != nil {
+		panic(err)
+	}
+	r.backend = backend
 
 	switch subcommand {
 	case "get":
