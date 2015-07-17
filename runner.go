@@ -13,7 +13,25 @@ type Runner struct {
 }
 
 func (r *Runner) Run(subcommand string, args []string) {
-	backend, err := FindBackend("consul:///")
+	// join no need to load etc
+	if subcommand == "join" {
+		checkArgSizeOf(args, 1)
+		uri := args[0]
+		err := WriteToConfig(uri)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("OK: Write %s to %s\n", uri, defaultConfigPath)
+		return
+	}
+
+	config, err := DefaultConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	backend, err := FindBackend(config.URI)
 	if err != nil {
 		panic(err)
 	}
@@ -33,10 +51,6 @@ func (r *Runner) Run(subcommand string, args []string) {
 		checkArgSizeOf(args, 1)
 		key := args[0]
 		r.Delete(key)
-
-	case "join":
-		fmt.Fprintf(os.Stderr, "join is not yet implemented...\n")
-		flag.Usage()
 
 	case "version":
 		fmt.Printf("version v%s\n", Version)

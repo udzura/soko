@@ -27,6 +27,11 @@ type Backend interface {
 }
 
 func FindBackend(uri string) (Backend, error) {
+	if uri == "" {
+		// Defaults to return consul default backend
+		return NewConsulBackend("", false)
+	}
+
 	u, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
