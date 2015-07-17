@@ -1,10 +1,11 @@
 VERSION := $(shell go run cmd/soko/soko.go version | sed 's/version //')
+.PHONY: solo test setup clean-zip all compress release
+
+solo: test
+	go build ./cmd/soko
 
 test:
 	go test ./...
-
-solo:
-	go build ./cmd/soko
 
 setup:
 	which gox || go get github.com/mitchellh/gox
