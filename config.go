@@ -35,6 +35,7 @@ func (c *Config) GetConfigBySecrion(sectionName string) (SectionConfig, error) {
 			"password",
 			"tenant_name",
 			"auth_url",
+			"region",
 		}
 		for _, key := range validKeys {
 			tomlKey := fmt.Sprintf("%s.%s", sectionName, key)
