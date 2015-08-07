@@ -77,7 +77,7 @@ func (b *OpenStackBackend) Delete(serverID string, key string) error {
 
 	opts := servers.MetadataOpts(metadata)
 
-	_, err = servers.UpdateMetadata(b.client, serverID, opts).Extract()
+	_, err = servers.ResetMetadata(b.client, serverID, opts).Extract()
 	return err
 }
 
