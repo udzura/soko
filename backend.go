@@ -23,13 +23,13 @@ type Backend interface {
 	// ...
 }
 
-func FindBackend(uri string) (Backend, error) {
-	if uri == "" {
+func FindBackend(config *Config) (Backend, error) {
+	if config.URI == "" {
 		// Defaults to return consul default backend
 		return NewConsulBackend("", false)
 	}
 
-	u, err := url.Parse(uri)
+	u, err := url.Parse(config.URI)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,13 @@ func FindBackend(uri string) (Backend, error) {
 		return NewConsulBackend(u.Host, false)
 	case "consuls":
 		return NewConsulBackend(u.Host, true)
+	case "openstack":
+		c, err := config.GetConfigBySection("openstack")
+		if err != nil {
+			return nil, err
+		}
+		return NewOpenStackBackend(c)
 	default:
-		return nil, fmt.Errorf("Unsupported schema: %s", uri)
+		return nil, fmt.Errorf("Unsupported schema: %s of %s", u.Scheme, config.URI)
 	}
 }

@@ -24,7 +24,7 @@ uri = "%s"
 `
 )
 
-func (c *Config) GetConfigBySecrion(sectionName string) (SectionConfig, error) {
+func (c *Config) GetConfigBySection(sectionName string) (SectionConfig, error) {
 	switch sectionName {
 	case "consul":
 		return make(SectionConfig, 0), nil
@@ -39,7 +39,9 @@ func (c *Config) GetConfigBySecrion(sectionName string) (SectionConfig, error) {
 		}
 		for _, key := range validKeys {
 			tomlKey := fmt.Sprintf("%s.%s", sectionName, key)
-			cfg[key] = c.original.Get(tomlKey).(string)
+			if v := c.original.Get(tomlKey); v != nil {
+				cfg[key] = v.(string)
+			}
 		}
 		return cfg, nil
 	case "aws":

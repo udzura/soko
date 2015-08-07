@@ -31,7 +31,7 @@ func (r *Runner) Run(subcommand string, args []string) {
 		panic(err)
 	}
 
-	backend, err := FindBackend(config.URI)
+	backend, err := FindBackend(config)
 	if err != nil {
 		panic(err)
 	}
