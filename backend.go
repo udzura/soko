@@ -46,6 +46,12 @@ func FindBackend(config *Config) (Backend, error) {
 			return nil, err
 		}
 		return NewOpenStackBackend(c)
+	case "aws":
+		c, err := config.GetConfigBySection("aws")
+		if err != nil {
+			return nil, err
+		}
+		return NewAWSBackend(c)
 	default:
 		return nil, fmt.Errorf("Unsupported schema: %s of %s", u.Scheme, config.URI)
 	}
