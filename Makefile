@@ -1,7 +1,7 @@
 VERSION := $(shell go run cmd/soko/soko.go version | sed 's/version //')
 .PHONY: solo test setup clean-zip all compress release
 
-solo: test
+soko: test
 	go build ./cmd/soko
 
 test:
