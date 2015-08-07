@@ -10,7 +10,11 @@ import (
 
 type Config struct {
 	URI string
+
+	original *toml.TomlTree
 }
+
+type SectionConfig map[string]string
 
 const (
 	defaultConfigPath = "/etc/soko.toml"
@@ -19,6 +23,30 @@ const (
 uri = "%s"
 `
 )
+
+func (c *Config) GetConfigBySecrion(sectionName string) (SectionConfig, error) {
+	switch sectionName {
+	case "consul":
+		return make(SectionConfig, 0), nil
+	case "openstack":
+		cfg := make(SectionConfig, 0)
+		validKeys := []string{
+			"username",
+			"password",
+			"tenant_name",
+			"auth_url",
+		}
+		for _, key := range validKeys {
+			tomlKey := fmt.Sprintf("%s.%s", sectionName, key)
+			cfg[key] = c.original.Get(tomlKey).(string)
+		}
+		return cfg, nil
+	case "aws":
+		return nil, fmt.Errorf("AWS not yet implemented")
+	default:
+		return nil, fmt.Errorf("Invalid backend: %s", sectionName)
+	}
+}
 
 func DefaultConfig() (*Config, error) {
 	if _, err := os.Stat(defaultConfigPath); err != nil {
@@ -32,6 +60,7 @@ func DefaultConfig() (*Config, error) {
 	}
 	conf := &Config{}
 	conf.URI = data.Get("default.uri").(string)
+	conf.original = data
 
 	return conf, nil
 }
