@@ -42,11 +42,16 @@ func (b *AWSBackend) Get(serverID string, key string) (string, error) {
 		return "", err
 	}
 
-	if len(tags.Tags) != 1 {
-		return "", fmt.Errorf("Invalid size of key %s: %d tags exist", key, len(tags.Tags))
+	switch s := len(tags.Tags); s {
+	case 0:
+		sayEmpty(key)
+		return "", nil
+	case 1:
+		return *tags.Tags[0].Value, nil
+	default:
+		return "", fmt.Errorf("Invalid size of key %s: %d tags exist", key, s)
 	}
 
-	return *tags.Tags[0].Value, nil
 }
 
 func (b *AWSBackend) Put(serverID string, key string, value string) error {
