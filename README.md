@@ -27,13 +27,42 @@ OK
 Value for Test seems to be empty.
 ```
 
+## Configuration
+
+* Exists `/etc/soko.toml`
+
+```toml
+[default]
+# This is a uri that stands for backend(consul, aws, openstack)
+uri = "consul://foo.example.consul:8500/"
+
+[openstack]
+# OpenStack specific config
+username = "udzura"
+password = "XXXXXXXXXXXXXX"
+tenant_name = "soko-test"
+auth_url = "https://keystone.example.com:1234/v2.0"
+region = "RegionOne"
+
+[aws]
+# AWS specific config
+access_key_id = "AKIXXXXXXXXXXXXX"
+secret_access_key = "4Jr6DXXXXXXXXXXXXXXXXXXXXXX"
+region = "ap-northeast-1"
+```
+
 ## soko will work on
 
 * Cloud servers(such as EC2, OpenStack... with file `/var/lib/cloud/data/instance-id` existing)
 * Cousul cluster backended
 
+### Under testing
+
+* OpenStack compute API v2
+* AWS EC2
+
 ## Yaruzo!!
 
-* OpenSTack metadata backend
-* EC2 tags backend
+* Google Compute Engine
+* etcd....???
 * Redis....??????
