@@ -1,6 +1,24 @@
-# soko
+# soko (倉庫)
 
-Metadata Manager, backended with Consul, EC2, OpenStack Nova and so on
+Server metadata inventory Manager, backended with Consul, EC2, OpenStack Nova and so on
+
+## Why soko?
+
+In some case we need to know the server's role(web server? api server?),
+or master/slave (in case of MySQL, Solr, &c.), or some kind of metadata.
+
+`soko` is designed for handling such metadata from Server inventory in one liner.
+
+`soko` is very friendly with shell scripts(which are easy and available in `cloud-init`),
+`ohai` for Chef, `facter` for Puppet, `run_command` in Itamae, and so on.
+
+Inventory backends with:
+
+* Consul KV
+* EC2's Tags
+* Metadata attribute in OpenStack Compute API v2
+
+And more, soon...
 
 ## Install
 
