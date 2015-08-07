@@ -26,6 +26,7 @@ compress: all clean-zip
 
 release: compress
 	git push origin master
+	rm -rf pkg/.DS_Store  
 	ghr $(VERSION) pkg
 	git fetch origin --tags
 
