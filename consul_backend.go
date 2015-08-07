@@ -36,11 +36,6 @@ func (b *ConsulBackend) pathOf(serverID string, key string) string {
 	return fmt.Sprintf("%s/%s/%s", prefix, serverID, key)
 }
 
-func (b *ConsulBackend) Save() error {
-	fmt.Fprintf(os.Stderr, "Currently do nothing.")
-	return nil
-}
-
 func (b *ConsulBackend) Get(serverID string, key string) (string, error) {
 	p, _, err := b.client.Get(b.pathOf(serverID, key), nil)
 	if err != nil {
