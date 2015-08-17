@@ -14,14 +14,18 @@ type Runner struct {
 
 func (r *Runner) Run(subcommand string, args []string) {
 	switch subcommand {
-	case "join":
-		checkArgSizeOf(args, 1)
-		backend := args[0]
-		err := WriteToConfig(backend)
+	case "open", "config":
+		config, err := NewConfig(args[0], args[1:])
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("OK: Write %s to %s\n", backend, defaultConfigPath)
+
+		backend, err := FindBackend(config)
+		if err != nil {
+			panic(err)
+		}
+		r.backend = backend
+		r.Save()
 	case "get":
 		r.prepare()
 		checkArgSizeOf(args, 1)
@@ -69,6 +73,14 @@ func (r *Runner) Delete(key string) {
 		panic(err)
 	}
 	fmt.Println("OK")
+}
+
+func (r *Runner) Save() {
+	err := r.backend.Save()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("OK: Write config to %s\n", defaultConfigPath)
 }
 
 func (r *Runner) prepare() {

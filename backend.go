@@ -32,10 +32,7 @@ func FindBackend(config *Config) (Backend, error) {
 		// Defaults to return consul default backend
 		return NewConsulBackend("", false)
 	case "consul", "consuls":
-		c, err := config.GetConfigBySection("openstack")
-		if err != nil {
-			return nil, err
-		}
+		c := config.SectionConfig
 		u, err := url.Parse(c["url"])
 		if err != nil {
 			return nil, err
@@ -44,17 +41,9 @@ func FindBackend(config *Config) (Backend, error) {
 		ssl := (u.Scheme == "https") || (config.Backend == "consuls")
 		return NewConsulBackend(u.Host, ssl)
 	case "openstack":
-		c, err := config.GetConfigBySection("openstack")
-		if err != nil {
-			return nil, err
-		}
-		return NewOpenStackBackend(c)
+		return NewOpenStackBackend(config.SectionConfig)
 	case "aws":
-		c, err := config.GetConfigBySection("aws")
-		if err != nil {
-			return nil, err
-		}
-		return NewAWSBackend(c)
+		return NewAWSBackend(config.SectionConfig)
 	default:
 		return nil, fmt.Errorf("Unsupported backend: %s", config.Backend)
 	}

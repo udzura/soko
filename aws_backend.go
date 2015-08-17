@@ -2,6 +2,7 @@ package soko
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -26,6 +27,11 @@ func NewAWSBackend(config SectionConfig) (*AWSBackend, error) {
 		SectionConfig: config,
 		client:        cli,
 	}, nil
+}
+
+func (b *AWSBackend) Save() error {
+	fmt.Fprintf(os.Stderr, "Currently do nothing.")
+	return nil
 }
 
 func (b *AWSBackend) Get(serverID string, key string) (string, error) {

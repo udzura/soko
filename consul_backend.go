@@ -2,6 +2,7 @@ package soko
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hashicorp/consul/api"
 )

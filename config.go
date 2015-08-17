@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/pelletier/go-toml"
 )
 
 type Config struct {
 	Backend string
-
-	original *toml.TomlTree
+	SectionConfig
 }
 
 type SectionConfig map[string]string
@@ -42,20 +42,21 @@ var validKeys = map[string][]string{
 	},
 }
 
-func (c *Config) GetConfigBySection(sectionName string) (SectionConfig, error) {
-	switch sectionName {
+func (c *Config) SetConfigByBackend(data *toml.TomlTree) error {
+	switch b := c.Backend; b {
 	case "consul", "openstack", "aws":
 		cfg := make(SectionConfig, 0)
-		keys := validKeys[sectionName]
+		keys := validKeys[b]
 		for _, key := range keys {
-			tomlKey := fmt.Sprintf("%s.%s", sectionName, key)
-			if v := c.original.Get(tomlKey); v != nil {
+			tomlKey := fmt.Sprintf("%s.%s", b, key)
+			if v := data.Get(tomlKey); v != nil {
 				cfg[key] = v.(string)
 			}
 		}
-		return cfg, nil
+		c.SectionConfig = cfg
+		return nil
 	default:
-		return nil, fmt.Errorf("Invalid backend: %s", sectionName)
+		return fmt.Errorf("Invalid backend: %s", c.Backend)
 	}
 }
 
@@ -71,8 +72,32 @@ func DefaultConfig() (*Config, error) {
 	}
 	conf := &Config{}
 	conf.Backend = data.Get("default.backend").(string)
-	conf.original = data
+	conf.SetConfigByBackend(data)
 
+	return conf, nil
+}
+
+func NewConfig(backend string, args []string) (*Config, error) {
+	conf := &Config{}
+	conf.Backend = backend
+	cfg := make(SectionConfig, 0)
+	keys := validKeys[backend]
+
+	for _, arg := range args {
+		kv := strings.SplitN(arg, "=", 2)
+		if len(kv) != 2 {
+			k := kv[0]
+			v := kv[1]
+			for _, key := range keys {
+				if k == key {
+					cfg[k] = v
+				}
+			}
+		} else {
+			return nil, fmt.Errorf("Invalud config kv pair: %s", arg)
+		}
+	}
+	conf.SectionConfig = cfg
 	return conf, nil
 }
 

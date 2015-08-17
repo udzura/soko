@@ -1,6 +1,9 @@
 package soko
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
@@ -34,6 +37,11 @@ func NewOpenStackBackend(config SectionConfig) (*OpenStackBackend, error) {
 		SectionConfig: config,
 		client:        cli,
 	}, nil
+}
+
+func (b *OpenStackBackend) Save() error {
+	fmt.Fprintf(os.Stderr, "Currently do nothing.")
+	return nil
 }
 
 func (b *OpenStackBackend) Get(serverID string, key string) (string, error) {
