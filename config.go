@@ -85,7 +85,7 @@ func NewConfig(backend string, args []string) (*Config, error) {
 
 	for _, arg := range args {
 		kv := strings.SplitN(arg, "=", 2)
-		if len(kv) != 2 {
+		if len(kv) == 2 {
 			k := kv[0]
 			v := kv[1]
 			for _, key := range keys {
