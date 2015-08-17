@@ -2,7 +2,6 @@ package soko
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -16,13 +15,7 @@ type Config struct {
 
 type SectionConfig map[string]string
 
-const (
-	defaultConfigPath = "/etc/soko.toml"
-
-	tomlTemplate = `[default]
-backend = "%s"
-`
-)
+const defaultConfigPath = "/etc/soko.toml"
 
 var validKeys = map[string][]string{
 	"consul": []string{
@@ -99,9 +92,4 @@ func NewConfig(backend string, args []string) (*Config, error) {
 	}
 	conf.SectionConfig = cfg
 	return conf, nil
-}
-
-func WriteToConfig(backend string) error {
-	data := fmt.Sprintf(tomlTemplate, backend)
-	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)
 }

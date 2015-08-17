@@ -2,20 +2,30 @@ package soko
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/hashicorp/consul/api"
 )
 
 type ConsulBackend struct {
-	client *api.KV
+	client      *api.KV
+	originalURL string
 }
+
+const consulTomlTemplate = `[default]
+backend = "%s"
+
+[consul]
+url = "%s"
+`
 
 func NewConsulBackend(hostWithPort string, ssl bool) (*ConsulBackend, error) {
 	conf := api.DefaultConfig()
-	if hostWithPort != "" {
-		conf.Address = hostWithPort
+	if hostWithPort == "" {
+		hostWithPort = "localhost:8500"
 	}
+
+	conf.Address = hostWithPort
 	if ssl {
 		conf.Scheme = "https"
 	}
@@ -26,8 +36,16 @@ func NewConsulBackend(hostWithPort string, ssl bool) (*ConsulBackend, error) {
 	}
 	kv := client.KV()
 
+	var url string
+	if ssl {
+		url = fmt.Sprintf("https://%s", hostWithPort)
+	} else {
+		url = fmt.Sprintf("http://%s", hostWithPort)
+	}
+
 	return &ConsulBackend{
-		client: kv,
+		client:      kv,
+		originalURL: url,
 	}, nil
 }
 
@@ -37,8 +55,12 @@ func (b *ConsulBackend) pathOf(serverID string, key string) string {
 }
 
 func (b *ConsulBackend) Save() error {
-	fmt.Fprintf(os.Stderr, "Currently do nothing.")
-	return nil
+	data := fmt.Sprintf(
+		consulTomlTemplate,
+		"consul",
+		b.originalURL,
+	)
+	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)
 }
 
 func (b *ConsulBackend) Get(serverID string, key string) (string, error) {
