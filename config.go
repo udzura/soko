@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	URI string
+	Backend string
 
 	original *toml.TomlTree
 }
@@ -20,11 +20,14 @@ const (
 	defaultConfigPath = "/etc/soko.toml"
 
 	tomlTemplate = `[default]
-uri = "%s"
+backend = "%s"
 `
 )
 
 var validKeys = map[string][]string{
+	"consul": []string{
+		"url",
+	},
 	"openstack": []string{
 		"username",
 		"password",
@@ -41,9 +44,7 @@ var validKeys = map[string][]string{
 
 func (c *Config) GetConfigBySection(sectionName string) (SectionConfig, error) {
 	switch sectionName {
-	case "consul":
-		return make(SectionConfig, 0), nil
-	case "openstack", "aws":
+	case "consul", "openstack", "aws":
 		cfg := make(SectionConfig, 0)
 		keys := validKeys[sectionName]
 		for _, key := range keys {
@@ -69,13 +70,13 @@ func DefaultConfig() (*Config, error) {
 		return nil, err
 	}
 	conf := &Config{}
-	conf.URI = data.Get("default.uri").(string)
+	conf.Backend = data.Get("default.backend").(string)
 	conf.original = data
 
 	return conf, nil
 }
 
-func WriteToConfig(uri string) error {
-	data := fmt.Sprintf(tomlTemplate, uri)
+func WriteToConfig(backend string) error {
+	data := fmt.Sprintf(tomlTemplate, backend)
 	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)
 }

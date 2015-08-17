@@ -16,12 +16,12 @@ func (r *Runner) Run(subcommand string, args []string) {
 	switch subcommand {
 	case "join":
 		checkArgSizeOf(args, 1)
-		uri := args[0]
-		err := WriteToConfig(uri)
+		backend := args[0]
+		err := WriteToConfig(backend)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("OK: Write %s to %s\n", uri, defaultConfigPath)
+		fmt.Printf("OK: Write %s to %s\n", backend, defaultConfigPath)
 	case "get":
 		r.prepare()
 		checkArgSizeOf(args, 1)

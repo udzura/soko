@@ -24,22 +24,22 @@ type Backend interface {
 }
 
 func FindBackend(config *Config) (Backend, error) {
-	if config.URI == "" {
+	switch config.Backend {
+	case "":
 		// Defaults to return consul default backend
 		return NewConsulBackend("", false)
-	}
+	case "consul", "consuls":
+		c, err := config.GetConfigBySection("openstack")
+		if err != nil {
+			return nil, err
+		}
+		u, err := url.Parse(c["url"])
+		if err != nil {
+			return nil, err
+		}
 
-	u, err := url.Parse(config.URI)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: implement AWS and OpenStack backend
-	switch u.Scheme {
-	case "consul":
-		return NewConsulBackend(u.Host, false)
-	case "consuls":
-		return NewConsulBackend(u.Host, true)
+		ssl := (u.Scheme == "https") || (config.Backend == "consuls")
+		return NewConsulBackend(u.Host, ssl)
 	case "openstack":
 		c, err := config.GetConfigBySection("openstack")
 		if err != nil {
@@ -53,6 +53,6 @@ func FindBackend(config *Config) (Backend, error) {
 		}
 		return NewAWSBackend(c)
 	default:
-		return nil, fmt.Errorf("Unsupported schema: %s of %s", u.Scheme, config.URI)
+		return nil, fmt.Errorf("Unsupported backend: %s", config.Backend)
 	}
 }
