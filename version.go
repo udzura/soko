@@ -1,3 +1,3 @@
 package soko
 
-const Version = "0.1.0.rc2"
+const Version = "0.1.0"
