@@ -29,6 +29,10 @@ func NewAWSBackend(config SectionConfig) (*AWSBackend, error) {
 }
 
 func (b *AWSBackend) Get(serverID string, key string) (string, error) {
+	return b.get(serverID, key, false)
+}
+
+func (b *AWSBackend) get(serverID string, key string, isInternal bool) (string, error) {
 	params := &ec2.DescribeTagsInput{
 		Filters: []*ec2.Filter{
 			{
@@ -49,7 +53,9 @@ func (b *AWSBackend) Get(serverID string, key string) (string, error) {
 
 	switch s := len(tags.Tags); s {
 	case 0:
-		sayEmpty(key)
+		if !isInternal {
+			sayEmpty(key)
+		}
 		return "", nil
 	case 1:
 		return *tags.Tags[0].Value, nil
@@ -76,6 +82,8 @@ func (b *AWSBackend) Put(serverID string, key string, value string) error {
 }
 
 func (b *AWSBackend) Delete(serverID string, key string) error {
+	currentV, _ := b.get(serverID, key, true)
+
 	params := &ec2.DeleteTagsInput{
 		Resources: []*string{
 			aws.String(serverID),
@@ -83,7 +91,7 @@ func (b *AWSBackend) Delete(serverID string, key string) error {
 		Tags: []*ec2.Tag{
 			{
 				Key:   aws.String(key),
-				Value: aws.String(""),
+				Value: aws.String(currentV),
 			},
 		},
 	}
