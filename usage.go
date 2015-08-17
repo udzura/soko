@@ -10,7 +10,7 @@ func init() {
 	flag.Usage = func() {
 		orig()
 		fmt.Printf(`Valid subcommands:
-join   - initialize backend config
+open   - initialize backend config
 get    - get metadata value
 put    - put metadata value with key
 delete - delete metadata value
