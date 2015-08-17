@@ -51,8 +51,12 @@ Value for Test seems to be empty.
 
 ```toml
 [default]
-# This is a uri that stands for backend(consul, aws, openstack)
-uri = "consul://foo.example.consul:8500/"
+# backend should be in [consul, aws, openstack]
+backend = "consul"
+
+[consul]
+# Set just a consul backend URL
+url = "consul://foo.example.consul:8500/"
 
 [openstack]
 # OpenStack specific config
@@ -67,6 +71,13 @@ region = "RegionOne"
 access_key_id = "AKIXXXXXXXXXXXXX"
 secret_access_key = "4Jr6DXXXXXXXXXXXXXXXXXXXXXX"
 region = "ap-northeast-1"
+```
+
+* You can configure soko by one liner:
+
+```bash
+$ soko open aws access_key_id=$AWS_ACCESS_KEY_ID secret_access_key=$AWS_SECRET_ACCESS_KEY region=ap-northeast-1
+# It goes such a way with other backends
 ```
 
 ## soko will work on
