@@ -13,7 +13,7 @@ type ConsulBackend struct {
 }
 
 const consulTomlTemplate = `[default]
-backend = "%s"
+backend = "consul"
 
 [consul]
 url = "%s"
@@ -57,7 +57,6 @@ func (b *ConsulBackend) pathOf(serverID string, key string) string {
 func (b *ConsulBackend) Save() error {
 	data := fmt.Sprintf(
 		consulTomlTemplate,
-		"consul",
 		b.originalURL,
 	)
 	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)

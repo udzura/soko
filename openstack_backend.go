@@ -2,7 +2,7 @@ package soko
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
@@ -14,6 +14,17 @@ type OpenStackBackend struct {
 
 	client *gophercloud.ServiceClient
 }
+
+const openstackTomlTemplate = `[default]
+backend = "openstack"
+
+[openstack]
+username = "%s"
+password = "%s"
+tenant_name = "%s"
+auth_url = "%s"
+region = "%s"
+`
 
 func NewOpenStackBackend(config SectionConfig) (*OpenStackBackend, error) {
 	opts := gophercloud.AuthOptions{
@@ -40,8 +51,16 @@ func NewOpenStackBackend(config SectionConfig) (*OpenStackBackend, error) {
 }
 
 func (b *OpenStackBackend) Save() error {
-	fmt.Fprintf(os.Stderr, "Currently do nothing.")
-	return nil
+	config := b.SectionConfig
+	data := fmt.Sprintf(
+		openstackTomlTemplate,
+		config["username"],
+		config["password"],
+		config["tenant_name"],
+		config["auth_url"],
+		config["region"],
+	)
+	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)
 }
 
 func (b *OpenStackBackend) Get(serverID string, key string) (string, error) {

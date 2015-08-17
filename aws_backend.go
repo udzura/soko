@@ -2,7 +2,7 @@ package soko
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -14,6 +14,15 @@ type AWSBackend struct {
 
 	client *ec2.EC2
 }
+
+const awsTomlTemplate = `[default]
+backend = "aws"
+
+[aws]
+access_key_id = "%s"
+secret_access_key = "%s"
+region = "%s"
+`
 
 func NewAWSBackend(config SectionConfig) (*AWSBackend, error) {
 	cred := credentials.NewStaticCredentials(config["access_key_id"], config["secret_access_key"], "")
@@ -30,8 +39,14 @@ func NewAWSBackend(config SectionConfig) (*AWSBackend, error) {
 }
 
 func (b *AWSBackend) Save() error {
-	fmt.Fprintf(os.Stderr, "Currently do nothing.")
-	return nil
+	config := b.SectionConfig
+	data := fmt.Sprintf(
+		awsTomlTemplate,
+		config["access_key_id"],
+		config["secret_access_key"],
+		config["region"],
+	)
+	return ioutil.WriteFile(defaultConfigPath, []byte(data), 0644)
 }
 
 func (b *AWSBackend) Get(serverID string, key string) (string, error) {
