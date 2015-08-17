@@ -6,6 +6,9 @@ import (
 )
 
 type Backend interface {
+	// Saves current configuration to a specific file
+	Save() error
+
 	// APIs to control backend metadata
 	// Gets value from key
 	Get(serverID string, key string) (string, error)
